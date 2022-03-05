@@ -206,25 +206,17 @@ public class StringListImplTest {
     @Test
     public void testToArray() {
         out.add(FIRST);
-        Assertions.assertEquals(1,out.size);
-        String[] testArray = new String[2];
-        testArray[0]=OTHER;
-        testArray[1]=OTHER2;
-        Assertions.assertEquals(testArray, out.toArray(testArray));
-        Assertions.assertEquals(2, out.size);
+        out.add(SECOND);
+        out.add(THIRD);
+        String[] expected = new String[3];
+        expected[0]=FIRST;
+        expected[1]=SECOND;
+        expected[2]=THIRD;
+        Assertions.assertEquals(3, out.toArray().length);
+        Assertions.assertArrayEquals(expected,out.toArray());
 
 
     }
-
-    @Test
-    public void testToArrayExceptions() {
-        String[] testArray = new String[2];
-        testArray[0] = "";
-        testArray[1]="";
-        Assertions.assertThrows(EmptyParameterException.class, () -> out.toArray(testArray));
-
-    }
-
 
 
 }

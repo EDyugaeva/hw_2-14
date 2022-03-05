@@ -189,25 +189,12 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String[] toArray(String[] newArray) {
-        boolean emptyArray = true;
-        for (int i = 0; i < newArray.length; i++) {
-            if (!newArray[i].isEmpty()) {
-                emptyArray = false;
-            }
+    public String[] toArray() {
+        String[] result = new String[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = arr[i];
         }
-        if (emptyArray) {
-            throw new EmptyParameterException("Объект не задан");
-        }
-        size = 0;
-        for (int i = 0; i < newArray.length; i++) {
-            if (!newArray[i].isEmpty()) {
-                arr[i]=newArray[i];
-                size++;
-            }
-
-        }
-        return newArray;
+        return result;
     }
 
 
