@@ -13,10 +13,10 @@ public class StringListImpl implements StringList {
 
     @Override
     public String add(String item) {
-        if (item == null) {
+        if (item.isEmpty()) {
             throw new EmptyParameterException("Объект не задан");
         }
-        for (int i = 0; i < arr.length-1; i++) {
+        for (int i = 0; i < arr.length - 1; i++) {
             if (arr[i] == null) {
                 arr[i] = item;
                 size++;
@@ -28,23 +28,24 @@ public class StringListImpl implements StringList {
 
     @Override
     public String add(int index, String item) {
-        if (item == null || index <0) {
+        if (item.isEmpty() || index < 0) {
             throw new EmptyParameterException("Объект не задан или задан не верно");
         }
         arr[index] = item;
         size++;
-        for (int i = arr.length-1; i > 1 ; i--) {
+        for (int i = index; i > 0; i--) {
             if (arr[i] != null && arr[i - 1] == null) {
                 arr[i - 1] = arr[i];
                 arr[i] = null;
             }
-        }        return item;
+        }
+        return item;
     }
 
 
     @Override
     public String set(int index, String item) {
-        if (item == null || index <0) {
+        if (item.isEmpty() || index < 0) {
             throw new EmptyParameterException("Объект не задан или задан не верно");
         }
         if (index - 1 > size) {
@@ -58,34 +59,35 @@ public class StringListImpl implements StringList {
 
     @Override
     public String remove(String item) {
-        if (item == null) {
+        if (item.isEmpty()) {
             throw new EmptyParameterException("Объект не задан");
         }
         boolean found = false;
-        for (int i = 0; i < size ; i++) {
+        for (int i = 0; i < size; i++) {
             if (arr[i].equals(item)) {
                 found = true;
                 arr[i] = null;
+                size--;
             }
 
         }
-            for (int j = 0; j < size ; j++) {
-                if (arr[j] == null) {
-                    arr[j] = arr[j+1];
-                    arr[j+1] = null;
-                }
+        for (int j = 0; j < size; j++) {
+            if (arr[j] == null) {
+                arr[j] = arr[j + 1];
+                arr[j + 1] = null;
             }
+        }
         if (!found) {
             throw new MissingElementException("Данная строка не найдена");
         }
-            return item;
+        return item;
 
 
     }
 
     @Override
     public String remove(int index) {
-        if (index <0) {
+        if (index < 0 || index > size - 1) {
             throw new EmptyParameterException("Объект задан не верно");
         }
         if (index - 1 > size) {
@@ -93,10 +95,11 @@ public class StringListImpl implements StringList {
         }
         String deletedElement = arr[index];
         arr[index] = null;
-        for (int i = 0; i < size ; i++) {
+        for (int i = 0; i < size; i++) {
             if (arr[i] == null) {
-                arr[i] = arr[i+1];
-                arr[i+1] = null;
+                arr[i] = arr[i + 1];
+                arr[i + 1] = null;
+                size--;
             }
         }
         return deletedElement;
@@ -104,7 +107,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public boolean contains(String item) {
-        if (item == null) {
+        if (item.isEmpty()) {
             throw new EmptyParameterException("Объект не задан");
         }
         for (int i = 0; i < size; i++) {
@@ -117,7 +120,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public int indexOf(String item) {
-        if (item == null) {
+        if (item.isEmpty()) {
             throw new EmptyParameterException("Объект не задан");
         }
         for (int i = 0; i < size; i++) {
@@ -130,10 +133,10 @@ public class StringListImpl implements StringList {
 
     @Override
     public int lastIndexOf(String item) {
-        if (item == null) {
+        if (item.isEmpty()) {
             throw new EmptyParameterException("Объект не задан");
         }
-        for (int i = size-1; i > 0; i--) {
+        for (int i = size - 1; i > -1; i--) {
             if (arr[i].equals(item)) {
                 return i;
             }
@@ -143,10 +146,10 @@ public class StringListImpl implements StringList {
 
     @Override
     public String get(int index) {
-        if (index <0) {
+        if (index < 0) {
             throw new EmptyParameterException("Объект задан не верно");
         }
-        if (index - 1 > size) {
+        if (index > size - 1) {
             throw new MissingNumberException("Нет элемента с таким номером");
         }
         return arr[index];
@@ -154,27 +157,18 @@ public class StringListImpl implements StringList {
 
     @Override
     public boolean equals(StringList otherList) {
-        if (otherList == null) {
-            throw new EmptyParameterException("Объект не задан");
-        }
         if (otherList.isEmpty()) {
             throw new EmptyListException("Сравнение с пустным листом");
         }
         if (size != otherList.size()) {
             return false;
         }
-        boolean result = true;
         for (int i = 0; i < size; i++) {
-            for (int j = 0; j < otherList.size(); j++) {
-                if (otherList.get(j) == null) {
-                    j--;
-                }
-                if (!otherList.get(j).equals(arr[i])) {
-                    result = false;
-                }
+            if (!otherList.get(i).equals(get(i))) {
+                return false;
             }
         }
-        return result;
+        return true;
     }
 
     @Override
@@ -184,22 +178,34 @@ public class StringListImpl implements StringList {
 
     @Override
     public boolean isEmpty() {
-        return arr == null;
+        return arr[0] == null;
     }
 
     @Override
     public void clear() {
-        arr = null;
+        for (int i = 0; i < size; i++) {
+            arr[i] = null;
+        }
     }
 
     @Override
     public String[] toArray(String[] newArray) {
-        if (newArray == null) {
+        boolean emptyArray = true;
+        for (int i = 0; i < newArray.length; i++) {
+            if (!newArray[i].isEmpty()) {
+                emptyArray = false;
+            }
+        }
+        if (emptyArray) {
             throw new EmptyParameterException("Объект не задан");
         }
+        size = 0;
+        for (int i = 0; i < newArray.length; i++) {
+            if (!newArray[i].isEmpty()) {
+                arr[i]=newArray[i];
+                size++;
+            }
 
-        for (int i = 0; i < newArray.length-1; i++) {
-            arr[i] = newArray[i];
         }
         return newArray;
     }
